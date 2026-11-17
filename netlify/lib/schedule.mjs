@@ -1,4 +1,4 @@
-// Termin-Logik: Intervalle und kalenderbasierte Wiederholungen
+// Termin-Logik: Intervalle, kalenderbasierte Wiederholungen und einmalige Aufgaben.
 // Datumswerte immer als 'YYYY-MM-DD'.
 
 const parse = (ds) => ds.split('-').map(Number);
@@ -16,6 +16,9 @@ export function addInterval(ds, n, unit) {
   const ny = y + Math.floor(total / 12), nm = mod(total, 12) + 1;
   return fmt(ny, nm, Math.min(d, daysInMonth(ny, nm)));
 }
+
+/** Jahresdaten einer Aufgabe ('MM-DD'), kompatibel mit dem alten Einzelfeld yearDate. */
+export const yearDatesOf = (t) => (t.yearDates?.length ? t.yearDates : t.yearDate ? [t.yearDate] : []);
 
 /** Passt das Datum zur Kalender-Regel? anchor = Referenztermin für "alle N …" (null = ohne Takt-Prüfung). */
 export function matches(t, ds, anchor = t.anchor) {
@@ -35,9 +38,12 @@ export function matches(t, ds, anchor = t.anchor) {
     return mod((y * 12 + m) - (ay * 12 + am), n) === 0;
   }
   if (t.intervalUnit === 'year') {
-    const [tm, td] = t.yearDate.split('-').map(Number);
-    const target = tm === 2 && td === 29 && daysInMonth(y, 2) === 28 ? 28 : td;
-    if (m !== tm || d !== target) return false;
+    const hit = yearDatesOf(t).some((yd) => {
+      const [tm, td] = yd.split('-').map(Number);
+      const target = tm === 2 && td === 29 && daysInMonth(y, 2) === 28 ? 28 : td;
+      return m === tm && d === target;
+    });
+    if (!hit) return false;
     if (!anchor || n === 1) return true;
     return mod(y - parse(anchor)[0], n) === 0;
   }
@@ -46,20 +52,21 @@ export function matches(t, ds, anchor = t.anchor) {
 
 /** Erster passender Termin am oder nach `from`. */
 export function firstOnOrAfter(t, from, anchor = t.anchor) {
-  const limit = 370 * (t.intervalUnit === 'year' ? (t.intervalValue || 1) : Math.ceil((t.intervalValue || 1) / 12) + 1) + 400;
+  const n = t.intervalValue || 1;
+  const limit = 370 * (t.intervalUnit === 'year' ? n : Math.ceil(n / 12) + 1) + 400;
   let ds = from;
   for (let i = 0; i < limit; i++, ds = plusDays(ds, 1)) if (matches(t, ds, anchor)) return ds;
   return from; // sollte nie passieren
 }
 
-/** Kalender-Regel normalisieren und ersten Termin ab t.nextDue setzen. */
+/** Kalender-Regel: ersten Termin ab t.nextDue suchen und als Takt-Anker setzen. */
 export function setupCalendar(t) {
   const first = firstOnOrAfter(t, t.nextDue, null);
   t.nextDue = first;
   t.anchor = first;
 }
 
-/** Nächste Fälligkeit nach Erledigung/Überspringen am `date`. */
+/** Nächste Fälligkeit nach Erledigung/Überspringen am `date` (nicht für einmalige Aufgaben). */
 export function nextDueAfter(t, date) {
   const { intervalValue: n, intervalUnit: u } = t;
   if (t.schedule === 'calendar') {

@@ -4,3 +4,10 @@
 
 [functions]
   node_bundler = "esbuild"
+  # web-push unverändert mitliefern statt bündeln
+  external_node_modules = ["web-push"]
+
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "no-cache"

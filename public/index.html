@@ -3,55 +3,72 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Putzplan</title>
-  <meta name="theme-color" content="#0f766e">
+  <title>To-do-list</title>
+  <meta name="theme-color" content="#f2f3ee" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#121417" media="(prefers-color-scheme: dark)">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-title" content="Putzplan">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="To-do-list">
   <link rel="manifest" href="/manifest.webmanifest">
   <link rel="icon" href="/icon.svg" type="image/svg+xml">
-  <link rel="apple-touch-icon" href="/icon.svg">
+  <link rel="apple-touch-icon" href="/icon-180.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Instrument+Sans:wght@400..700&display=swap">
   <link rel="stylesheet" href="/style.css">
 </head>
 <body>
-  <!-- Login -->
+  <!-- Anmeldung -->
   <section id="auth" class="auth hidden">
-    <div class="auth-card">
-      <div class="logo">🧽</div>
-      <h1>Putzplan</h1>
-      <p class="muted">Reinigung & Unterhalt gemeinsam im Griff</p>
-      <div class="tabs">
-        <button data-auth="login" class="active">Anmelden</button>
-        <button data-auth="register">Registrieren</button>
+    <div class="auth-inner">
+      <img src="/icon.svg" alt="" class="auth-logo" width="64" height="64">
+      <h1 class="auth-title">To-do-list</h1>
+      <p class="auth-lead">Putzen, Unterhalt und Erledigungen – gemeinsam geplant.</p>
+      <div class="seg" role="tablist">
+        <button type="button" data-auth="login" class="on">Anmelden</button>
+        <button type="button" data-auth="register">Konto erstellen</button>
       </div>
-      <form id="authForm">
-        <label>Name<input name="name" autocomplete="username" required></label>
-        <label>Passwort<input name="password" type="password" autocomplete="current-password" required minlength="6"></label>
-        <label class="reg-only hidden">E-Mail (optional, für Erinnerungen)<input name="email" type="email" autocomplete="email"></label>
-        <label class="reg-only hidden">Team-Code<input name="teamCode" autocomplete="off"></label>
-        <button class="btn primary block" type="submit" id="authSubmit">Anmelden</button>
-        <p id="authError" class="error"></p>
+      <form id="authForm" class="stack">
+        <label class="field">Name<input name="name" autocomplete="username" required></label>
+        <label class="field">Passwort<input name="password" type="password" autocomplete="current-password" required minlength="6"></label>
+        <label class="field reg-only hidden">Team-Code<input name="teamCode" autocomplete="off"></label>
+        <button class="btn primary wide" type="submit" id="authSubmit">Anmelden</button>
+        <p id="authError" class="error" role="alert"></p>
       </form>
     </div>
   </section>
 
   <!-- App -->
   <section id="app" class="hidden">
-    <header class="topbar">
-      <h1>🧽 Putzplan</h1>
-      <button id="userBtn" class="chip"></button>
+    <header class="top">
+      <div class="top-text">
+        <p class="top-date" id="topDate"></p>
+        <h1 class="top-title" id="topTitle"></h1>
+      </div>
+      <button id="meBtn" class="avatar big" aria-label="Konto und Einstellungen"></button>
     </header>
     <main id="main"></main>
-    <nav class="bottomnav">
-      <button data-view="heute" class="active"><span>📅</span>Fällig</button>
-      <button data-view="aufgaben"><span>📋</span>Aufgaben</button>
-      <button data-view="vorlagen"><span>✨</span>Generieren</button>
-      <button data-view="verlauf"><span>🕘</span>Verlauf</button>
-      <button data-view="team"><span>👥</span>Team</button>
+    <button class="fab" data-act="newtask" aria-label="Neue Aufgabe">
+      <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+    </button>
+    <nav class="tabbar" aria-label="Navigation">
+      <button data-view="heute" class="on">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="3"/><path d="M4 10h16M9 3v4M15 3v4"/></svg>Heute</button>
+      <button data-view="liste">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1.2"/><circle cx="4.5" cy="12" r="1.2"/><circle cx="4.5" cy="18" r="1.2"/></svg>Alle</button>
+      <button data-view="vorlagen">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2.2 5.4L20 9l-4.4 3.8L17 19l-5-3.1L7 19l1.4-6.2L4 9l5.8-.6z"/></svg>Vorlagen</button>
+      <button data-view="verlauf">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7"/><path d="M4 4v4h4M12 8v4l3 2"/></svg>Verlauf</button>
+      <button data-view="team">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3 19c.6-3.2 3-5 6-5s5.4 1.8 6 5"/><circle cx="17" cy="9" r="2.4"/><path d="M16.5 14c2.4.2 4 1.7 4.5 4"/></svg>Team</button>
     </nav>
   </section>
 
   <dialog id="dlg"><form method="dialog" id="dlgForm"></form></dialog>
-  <div id="toast" class="toast"></div>
+  <dialog id="viewer" class="viewer" aria-label="Foto"><img alt=""></dialog>
+  <div id="toast" class="toast" role="status" popover="manual"></div>
 
   <script src="/app.js"></script>
 </body>

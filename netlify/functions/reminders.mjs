@@ -1,10 +1,13 @@
 import { getStore } from '@netlify/blobs';
-import { runReminders } from './mail.mjs';
+import { runReminders } from '../lib/notify.mjs';
+import { createPush } from '../lib/push.mjs';
 
-// Läuft stündlich; jede Person erhält die Mail zu ihrer gewählten Uhrzeit (Zeitzone APP_TIMEZONE, Standard Europe/Zurich).
+// Läuft stündlich; jede Person erhält die Zusammenfassung zu ihrer gewählten Uhrzeit
+// (Zeitzone APP_TIMEZONE, Standard Europe/Zurich).
 export default async () => {
-  const r = await runReminders({ store: getStore({ name: 'putzplan', consistency: 'strong' }) });
-  console.log('Erinnerungen gesendet:', r.sent);
+  const store = getStore({ name: 'putzplan', consistency: 'strong' });
+  const r = await runReminders({ store, push: createPush(store) });
+  console.log('Push-Zusammenfassungen gesendet:', r.sent);
 };
 
 export const config = { schedule: '@hourly' };
