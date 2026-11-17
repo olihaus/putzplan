@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Putzplan</title>
+  <meta name="theme-color" content="#0f766e">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Putzplan">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="icon" href="/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/icon.svg">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <!-- Login -->
+  <section id="auth" class="auth hidden">
+    <div class="auth-card">
+      <div class="logo">🧽</div>
+      <h1>Putzplan</h1>
+      <p class="muted">Reinigung & Unterhalt gemeinsam im Griff</p>
+      <div class="tabs">
+        <button data-auth="login" class="active">Anmelden</button>
+        <button data-auth="register">Registrieren</button>
+      </div>
+      <form id="authForm">
+        <label>Name<input name="name" autocomplete="username" required></label>
+        <label>Passwort<input name="password" type="password" autocomplete="current-password" required minlength="6"></label>
+        <label class="reg-only hidden">E-Mail (optional, für Erinnerungen)<input name="email" type="email" autocomplete="email"></label>
+        <label class="reg-only hidden">Team-Code<input name="teamCode" autocomplete="off"></label>
+        <button class="btn primary block" type="submit" id="authSubmit">Anmelden</button>
+        <p id="authError" class="error"></p>
+      </form>
+    </div>
+  </section>
+
+  <!-- App -->
+  <section id="app" class="hidden">
+    <header class="topbar">
+      <h1>🧽 Putzplan</h1>
+      <button id="userBtn" class="chip"></button>
+    </header>
+    <main id="main"></main>
+    <nav class="bottomnav">
+      <button data-view="heute" class="active"><span>📅</span>Fällig</button>
+      <button data-view="aufgaben"><span>📋</span>Aufgaben</button>
+      <button data-view="vorlagen"><span>✨</span>Generieren</button>
+      <button data-view="verlauf"><span>🕘</span>Verlauf</button>
+      <button data-view="team"><span>👥</span>Team</button>
+    </nav>
+  </section>
+
+  <dialog id="dlg"><form method="dialog" id="dlgForm"></form></dialog>
+  <div id="toast" class="toast"></div>
+
+  <script src="/app.js"></script>
+</body>
+</html>
