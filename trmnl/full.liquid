@@ -1,0 +1,42 @@
+{%- comment -%} To-do-list – ganzer Bildschirm: links dringend, rechts demnächst {%- endcomment -%}
+<div class="layout layout--top">
+  <div class="columns">
+    <div class="column">
+      <span class="label label--underline">Heute & überfällig</span>
+      {%- for t in urgent -%}
+      <div class="item {% if t.status == 'late' %}item--emphasis-3{% else %}item--emphasis-2{% endif %}">
+        <div class="meta"></div>
+        <div class="content">
+          <span class="title title--small">{{ t.title }}</span>
+          <div class="flex gap--small">
+            <span class="label label--small {% if t.status == 'late' %}label--inverted{% else %}label--underline{% endif %}">{{ t.due }}</span>
+            {%- if t.who != "" %}<span class="label label--small label--outline">{{ t.who }}</span>{% endif %}
+            {%- if t.area != "" %}<span class="label label--small label--gray">{{ t.area }}</span>{% endif %}
+          </div>
+        </div>
+      </div>
+      {%- endfor -%}
+      {%- if urgent.size == 0 %}<span class="title title--small">Nichts fällig – alles erledigt.</span>{% endif -%}
+    </div>
+    <div class="column">
+      <span class="label label--underline">Demnächst</span>
+      {%- for t in later -%}
+      <div class="item">
+        <div class="meta"></div>
+        <div class="content">
+          <span class="title title--small">{{ t.title }}</span>
+          <div class="flex gap--small">
+            <span class="label label--small label--underline">{{ t.due }}</span>
+            {%- if t.who != "" %}<span class="label label--small label--outline">{{ t.who }}</span>{% endif %}
+          </div>
+        </div>
+      </div>
+      {%- endfor -%}
+      {%- if later.size == 0 %}<span class="description">Keine weiteren Termine.</span>{% endif -%}
+    </div>
+  </div>
+</div>
+<div class="title_bar">
+  <span class="title">To-do-list</span>
+  <span class="instance">{{ date_label }} · {{ summary }}</span>
+</div>

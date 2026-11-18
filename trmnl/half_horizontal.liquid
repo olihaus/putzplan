@@ -1,0 +1,32 @@
+{%- comment -%} To-do-list – halbe Höhe (Mashup 1 Oben / 1 Unten) {%- endcomment -%}
+<div class="layout layout--top">
+  <div class="columns">
+    <div class="column">
+      {%- for t in tasks limit: 3 -%}
+      <div class="item {% if t.status == 'late' %}item--emphasis-3{% elsif t.status == 'today' %}item--emphasis-2{% endif %}">
+        <div class="meta"></div>
+        <div class="content">
+          <span class="title title--small">{{ t.title }}</span>
+          <span class="label label--small {% if t.status == 'late' %}label--inverted{% else %}label--underline{% endif %}">{{ t.due }}{% if t.who != "" %} · {{ t.who }}{% endif %}</span>
+        </div>
+      </div>
+      {%- endfor -%}
+    </div>
+    <div class="column">
+      {%- for t in tasks offset: 3 limit: 3 -%}
+      <div class="item {% if t.status == 'late' %}item--emphasis-3{% elsif t.status == 'today' %}item--emphasis-2{% endif %}">
+        <div class="meta"></div>
+        <div class="content">
+          <span class="title title--small">{{ t.title }}</span>
+          <span class="label label--small {% if t.status == 'late' %}label--inverted{% else %}label--underline{% endif %}">{{ t.due }}{% if t.who != "" %} · {{ t.who }}{% endif %}</span>
+        </div>
+      </div>
+      {%- endfor -%}
+    </div>
+  </div>
+  {%- if tasks.size == 0 %}<span class="title">Alles erledigt</span>{% endif -%}
+</div>
+<div class="title_bar">
+  <span class="title">To-do-list</span>
+  <span class="instance">{{ summary }}</span>
+</div>

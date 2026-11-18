@@ -1,0 +1,17 @@
+{%- comment -%} To-do-list – Viertel {%- endcomment -%}
+<div class="layout layout--col layout--top gap--small">
+  {%- for t in tasks limit: 4 -%}
+  <div class="item {% if t.status == 'late' %}item--emphasis-3{% elsif t.status == 'today' %}item--emphasis-2{% endif %}">
+    <div class="meta"></div>
+    <div class="content">
+      <span class="title title--small">{{ t.title }}</span>
+      <span class="label label--small">{{ t.due }}</span>
+    </div>
+  </div>
+  {%- endfor -%}
+  {%- if tasks.size == 0 %}<span class="title title--small">Alles erledigt</span>{% endif -%}
+</div>
+<div class="title_bar">
+  <span class="title">To-do</span>
+  <span class="instance">{{ summary }}</span>
+</div>

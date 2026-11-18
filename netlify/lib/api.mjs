@@ -1,6 +1,7 @@
 import crypto from 'node:crypto';
 import { addInterval, nextDueAfter, setupCalendar, yearDatesOf } from './schedule.mjs';
 import { pruneSubs } from './push.mjs';
+import { trmnlData } from './trmnl.mjs';
 
 const UNITS = ['day', 'week', 'month', 'year'];
 const SCHEDULES = ['once', 'completion', 'fixed', 'calendar'];
@@ -155,7 +156,7 @@ function stateFor(db, me) {
 const fmtDate = (ds) => (ds ? ds.split('-').reverse().join('.') : '');
 
 // ---------- Handler ----------
-export function createApi({ store, photoStore, push, teamCode, secret }) {
+export function createApi({ store, photoStore, push, teamCode, secret, trmnlKey }) {
   const load = async () => (await store.get('db', { type: 'json' })) || { users: [], tasks: [], log: [] };
   const save = (db) => store.setJSON('db', db);
   const dropPhotos = async (ids) => {
@@ -175,6 +176,17 @@ export function createApi({ store, photoStore, push, teamCode, secret }) {
         if (!me) throw new HttpError('Nicht angemeldet', 401);
         return me;
       };
+
+      // --- TRMNL-Display (eigener Schlüssel, nur lesend) ---
+      if (parts[0] === 'trmnl' && method === 'GET') {
+        if (!trmnlKey) throw new HttpError('TRMNL ist nicht eingerichtet (TRMNL_KEY fehlt)', 404);
+        const given = url.searchParams.get('key') || (req.headers.get('authorization') || '').replace(/^Bearer\s+/i, '');
+        const a = Buffer.from(String(given)), k = Buffer.from(trmnlKey);
+        if (a.length !== k.length || !crypto.timingSafeEqual(a, k)) throw new HttpError('Falscher Schlüssel', 401);
+        const res = json(trmnlData(await load(), url.searchParams));
+        res.headers.set('cache-control', 'no-store');
+        return res;
+      }
 
       // --- Fotos (Binärdaten, eigener Pfad) ---
       if (parts[0] === 'photos') {

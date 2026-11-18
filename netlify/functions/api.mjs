@@ -10,6 +10,7 @@ export default async (req) => {
     push: createPush(store),
     teamCode: (process.env.TEAM_CODE || '').trim(),
     secret: process.env.SESSION_SECRET,
+    trmnlKey: (process.env.TRMNL_KEY || '').trim(),
   });
   return handler(req);
 };

@@ -1,0 +1,24 @@
+{%- comment -%} To-do-list – halbe Breite, z. B. rechts neben der Agenda (Mashup 1 Links / 1 Rechts) {%- endcomment -%}
+<div class="layout layout--col layout--top gap--small">
+  {%- for t in tasks -%}
+  <div class="item {% if t.status == 'late' %}item--emphasis-3{% elsif t.status == 'today' %}item--emphasis-2{% endif %}">
+    <div class="meta"></div>
+    <div class="content">
+      <span class="title title--small">{{ t.title }}</span>
+      <div class="flex gap--small">
+        <span class="label label--small {% if t.status == 'late' %}label--inverted{% else %}label--underline{% endif %}">{{ t.due }}</span>
+        {%- if t.who != "" %}<span class="label label--small label--outline">{{ t.who }}</span>{% endif %}
+      </div>
+    </div>
+  </div>
+  {%- endfor -%}
+  {%- if tasks.size == 0 -%}
+  <span class="title">Alles erledigt</span>
+  <span class="description">Für die nächsten Tage ist nichts geplant.</span>
+  {%- endif -%}
+  {%- if more > 0 %}<span class="label label--small label--gray">+{{ more }} weitere</span>{% endif -%}
+</div>
+<div class="title_bar">
+  <span class="title">To-do-list</span>
+  <span class="instance">{{ summary }}</span>
+</div>
